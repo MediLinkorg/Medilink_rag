@@ -1,0 +1,36 @@
+services:
+  weaviate:
+    image: semitechnologies/weaviate:1.27.0
+    command: ["--host", "0.0.0.0", "--port", "8080", "--scheme", "http"]
+    environment:
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "true"
+      PERSISTENCE_DATA_PATH: /var/lib/weaviate
+      DEFAULT_VECTORIZER_MODULE: none
+      ENABLE_MODULES: ""
+      QUERY_DEFAULTS_LIMIT: "25"
+      CLUSTER_HOSTNAME: "node1"
+    ports:
+      - "8080:8080"
+      - "50051:50051"
+    volumes:
+      - weaviate_data:/var/lib/weaviate
+    restart: unless-stopped
+
+  rag:
+    build: .
+    image: medilink-rag:latest
+    env_file: .env
+    environment:
+      WEAVIATE_HOST: weaviate
+    depends_on:
+      - weaviate
+    ports:
+      - "8002:8002"
+    volumes:
+      - hf_cache:/cache/hf
+    restart: unless-stopped
+
+volumes:
+  weaviate_data:
+  hf_cache:
+

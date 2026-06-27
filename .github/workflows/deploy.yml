@@ -54,6 +54,6 @@ jobs:
             export GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}"
             export HF_TOKEN="${{ secrets.HF_TOKEN }}"
             export IMAGE_TAG="${{ github.sha }}"
-            docker compose pull
-            docker compose up -d --remove-orphans
-            docker image prune -f
+            sudo -E docker compose pull
+            sudo -E docker compose up -d --remove-orphans
+            sudo -E docker image prune -f

@@ -1,0 +1,21 @@
+name: Manual Data Ingestion
+
+on:
+  workflow_dispatch: # Allows manual triggering from the GitHub Actions UI
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Weaviate Ingestion on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.RAG_EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+            cd ${{ secrets.RAG_DEPLOY_PATH }}
+            echo "Starting data ingestion..."
+            sudo docker compose exec rag python scripts/ingest.py
+            echo "Ingestion completed successfully!"
